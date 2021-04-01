@@ -98,7 +98,7 @@ class Processor():
         print('Done extracting article content...')
         df = {'url':urls, 'title':label, 'text':text}
         print('Outputing a dataframe...')
-        return df
+        return pd.DataFrame(df)
 
 # Example of command to use this class and methods:
 # df_test = Processor().process('folder_name/test.json')
