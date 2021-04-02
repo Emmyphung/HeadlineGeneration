@@ -91,11 +91,10 @@ class Processor():
         print('There are {} urls...'.format(len(urls)))
         label = []
         text = []
-	if type(start)== int:
-	    # start = int(start)
-	    urls = urls[start:]
-	elif type(end)== int:
-	    urls = urls[:end]
+        if type(start)== int:
+            urls = urls[start:]
+        elif type(end)== int:
+            urls = urls[:end]
         
         print('Will process {} urls in this run...'.format(len(urls)))
         for url in tqdm(urls):
