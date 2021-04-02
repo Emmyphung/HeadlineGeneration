@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import sys
+import os
 import collections
 import json
 import multiprocessing
@@ -89,6 +91,7 @@ class Processor():
         print('There are {} urls...'.format(len(urls)))
         label = []
         text = []
+        #urls = urls[:2]
         for url in tqdm(urls):
             content, title = self._get_content_from_url(url)
             content, title = self.tokenize(content), self.tokenize(title)
@@ -98,7 +101,7 @@ class Processor():
         print('Done extracting article content...')
         df = {'url':urls, 'title':label, 'text':text}
         print('Outputing a dataframe...')
-        return df
+        return pd.DataFrame(df)
 
 # Example of command to use this class and methods:
 # df_test = Processor().process('folder_name/test.json')
