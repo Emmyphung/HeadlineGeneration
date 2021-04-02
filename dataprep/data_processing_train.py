@@ -91,12 +91,19 @@ class Processor():
         print('There are {} urls...'.format(len(urls)))
         label = []
         text = []
-        if type(start)== int:
+        if start!= 'none':
+            start = int(start) 
+            print('Urls start at: ', start)
             urls = urls[start:]
-        elif type(end)== int:
+        elif end!= 'none':
+            end = int(end) 
+            print('Urls end at: ', end)
             urls = urls[:end]
+        else:
+            print('No start-end received')
+            urls = urls[:4]
         
-        print('Will process {} urls in this run...'.format(len(urls)))
+        print('Will process {} urls in this run...'.format(len(urls)))  
         for url in tqdm(urls):
             content, title = self._get_content_from_url(url)
             content, title = self.tokenize(content), self.tokenize(title)
