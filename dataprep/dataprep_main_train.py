@@ -16,7 +16,7 @@ def main(args):
     
     cwd = os.getcwd()
     # data_dir = os.path.join(cwd, dataname)
-    print(data_dir)
+    print(data_dir, start, end)
     start_time = time.time()
     #Load train_data, dev_data, train_dev_data, test_data
     df = Processor().process(data_dir,start, end)
