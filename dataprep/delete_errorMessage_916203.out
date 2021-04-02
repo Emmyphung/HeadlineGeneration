@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "dataprep_main_train.py", line 8, in <module>
+    from data_processing_train import *
+  File "/misc/vlgscratch5/PichenyGroup/s2i-common/headline-generation/dataprep/data_processing_train.py", line 94
+    if type(start)== int:
+                        ^
+TabError: inconsistent use of tabs and spaces in indentation

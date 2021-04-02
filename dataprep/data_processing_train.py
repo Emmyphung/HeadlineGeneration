@@ -83,7 +83,7 @@ class Processor():
         tokens = nltk.word_tokenize(no_punctuation)
         return tokens
     
-    def process(self, filepath):
+    def process(self, filepath,start,end):
         """Main function of the Processor class"""
         print('Processing json and extracting urls...')
         urls = self._get_url_from_json(os.path.join(filepath))
@@ -91,7 +91,13 @@ class Processor():
         print('There are {} urls...'.format(len(urls)))
         label = []
         text = []
-        # urls = urls[:2]
+	if type(start)== int:
+	    # start = int(start)
+	    urls = urls[start:]
+	elif type(end)== int:
+	    urls = urls[:end]
+        
+        print('Will process {} urls in this run...'.format(len(urls)))
         for url in tqdm(urls):
             content, title = self._get_content_from_url(url)
             content, title = self.tokenize(content), self.tokenize(title)
