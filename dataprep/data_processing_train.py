@@ -51,6 +51,7 @@ class Processor():
             return ' ', ' '
 
         # save to file
+        
         with open('file.html', 'wb') as fh:
             fh.write(r.content)
         #print('Running Article...')
@@ -62,11 +63,17 @@ class Processor():
         #print('Done opening Article.html...')
         # need to set download_state to 2 for this to work
         a.download_state = 2
-
-        a.parse()
-        
-        title = a.title
-        content = re.sub("\n\n"," ",a.text)
+        try:
+            a.parse()
+            try:
+                title = a.title
+                content = re.sub("\n\n"," ",a.text)
+            except:
+                title = ' '
+                content = ' '
+        except:
+            title = ' '
+            content = ' '
         # Now the article should be populated
         return content, title
 
