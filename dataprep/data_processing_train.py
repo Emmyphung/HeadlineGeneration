@@ -98,7 +98,12 @@ class Processor():
         print('There are {} urls...'.format(len(urls)))
         label = []
         text = []
-        if start!= 'none':
+        if start!= 'none' and end!= 'none':
+            start = int(start)
+            end = int(end) 
+            print('Urls start at: ', start, ' and end at: ', end)
+            urls = urls[start:end]
+        elif start != 'none':
             start = int(start) 
             print('Urls start at: ', start)
             urls = urls[start:]
