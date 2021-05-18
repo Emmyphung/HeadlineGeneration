@@ -53,6 +53,7 @@ class RawDataProcessor(object):
         separated by [SEP].
     """
     self.articles = dict()
+    self.titles = dict()
     self.tokenizer = tokenization.FullTokenizer(
         vocab, do_lower_case=do_lower_case, split_on_punc=False)
     self.len_title = len_title
@@ -73,11 +74,12 @@ class RawDataProcessor(object):
       for name in files:
         if not name.endswith(".json"):
           continue
-        url, article = self._get_article_content_from_json(
+        url, article, title = self._get_article_content_from_json(
             os.path.join(path, name))
         if not article.text_a:
           continue
         self.articles[RawDataProcessor.normalize_url(url)] = article
+        self.titles[RawDataProcessor.normalize_url(url)] = title
         if len(self.articles) % 5000 == 0:
           print("Number of articles loaded: %d\r" % len(self.articles), end="")
     print()
@@ -91,17 +93,23 @@ class RawDataProcessor(object):
       writers.append(tf.io.TFRecordWriter(output_file))
       story_partition.append(list())
     with tf.io.gfile.GFile(input_file, "r") as story_json_file:
+      count=0
       stories = json.load(story_json_file)
       writer_index = 0
       for story in stories:
+        count+=1
         articles = []
+        
         for url in story["urls"]:
           normalized_url = RawDataProcessor.normalize_url(url)
           if normalized_url in self.articles:
             articles.append(self.articles[normalized_url])
+            title = self.titles[normalized_url]
         if not articles:
           continue
-        story_partition[writer_index].append((story["label"], articles))
+        if count <6:
+          print('title is:', title)
+        story_partition[writer_index].append((title, articles)) #story["label"]
         writer_index = (writer_index + 1) % len(writers)
     lock = multiprocessing.Lock()
     pool = multiprocessing.pool.ThreadPool(len(writers))
@@ -126,15 +134,15 @@ class RawDataProcessor(object):
     """Returns (url, InputExample) keeping content extracted from file_path."""
     with tf.io.gfile.GFile(file_path, "r") as article_json_file:
       article = json.load(article_json_file)
-      if self.include_article_title_in_passage:
-        return article["url"], classifier_data_lib.InputExample(
-            guid=self.guid,
-            text_a=article["title"],
-            text_b=article["maintext"],
-            label=self.label)
-      else:
-        return article["url"], classifier_data_lib.InputExample(
-            guid=self.guid, text_a=article["maintext"], label=self.label)
+      #if self.include_article_title_in_passage:
+      #   return article["url"], classifier_data_lib.InputExample(
+      #       guid=self.guid,
+      #       text_a=article["title"],
+      #       text_b=article["maintext"],
+      #       label=self.label)
+      # else:
+      return article["url"], classifier_data_lib.InputExample(
+            guid=self.guid, text_a=article["maintext"], label=self.label), article["title"]
 
   def _write_story_partition(self, data):
     """Writes stories in a partition into file."""

@@ -18,7 +18,7 @@ import os
 
 from absl import app
 from absl import flags
-from official.nlp.nhnet import raw_data_processor
+import raw_data_processor
 
 FLAGS = flags.FLAGS
 
@@ -33,7 +33,7 @@ flags.DEFINE_integer("len_passage", 200,
                      "Maximum number of tokens in article passage.")
 flags.DEFINE_integer("max_num_articles", 5,
                      "Maximum number of articles in a story.")
-flags.DEFINE_bool("include_article_title_in_passage", False,
+flags.DEFINE_bool("include_article_title_in_passage", True,
                   "Whether to include article title in article passage.")
 flags.DEFINE_string("data_folder", None,
                     "Folder path to the downloaded data folder (output).")
