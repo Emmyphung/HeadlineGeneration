@@ -55,12 +55,11 @@ def initialize_bert2bert_from_pretrained_bert(
   logging.info(
       "Checkpoint file %s found and restoring from "
       "initial checkpoint for core model.", init_checkpoint)
-  #status = ckpt.restore(init_checkpoint)
-  ckpt.restore(init_checkpoint).expect_partial() #add expect_partial()
+  status = ckpt.restore(init_checkpoint)
 
   # Expects the bert model is a subset of checkpoint as pooling layer is
   # not used.
-  # status.assert_existing_objects_matched()
+  status.assert_existing_objects_matched()
   logging.info("Loading from checkpoint file completed.")
 
   # Saves a checkpoint with transformer layers.

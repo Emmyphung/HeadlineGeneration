@@ -24,7 +24,7 @@ from six.moves import zip
 import tensorflow as tf
 from official.common import distribute_utils
 from official.modeling.hyperparams import params_dict
-from official.nlp.nhnet import evaluation
+import evaluation
 from official.nlp.nhnet import input_pipeline
 from official.nlp.nhnet import models
 from official.nlp.nhnet import optimizer

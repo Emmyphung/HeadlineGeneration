@@ -522,7 +522,8 @@ def create_bert2bert_model(
   bert_layer, decoder_layer = get_bert2bert_layers(params=params)
   if init_checkpoint:
     utils.initialize_bert2bert_from_pretrained_bert(bert_layer, decoder_layer,
-                                                    init_checkpoint)
+                                                    init_checkpoint) #add expect_partial() #5/10
+
   return cls(
       params=params,
       bert_layer=bert_layer,

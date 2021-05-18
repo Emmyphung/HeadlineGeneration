@@ -25,6 +25,16 @@ from official.nlp.nhnet import models
 from official.nlp.transformer import metrics as metrics_v2
 from official.nlp.transformer.utils import metrics
 
+"""(Edit by Sue) Add necessary packages for calling tokenizer"""
+from official.nlp.bert import tokenization
+from absl import flags
+
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string("vocab", None, "Filepath of the BERT vocabulary.")
+flags.DEFINE_bool("do_lower_case", True,
+                  "Whether the vocabulary is uncased or not.")
+
 
 def rouge_l_fscore(logits, labels):
   """ROUGE scores computation between labels and predictions.
@@ -58,7 +68,7 @@ def rouge_2_fscore(logits, labels):
     rouge2_fscore: approx rouge-2 f1 score.
   """
   predictions = np.argmax(logits, axis=-1)
-  rouge_2_f_score = metrics.rouge_n(predictions, labels)
+  rouge_2_f_score = metrics.rouge_n(predictions, labels, n=1)
   return rouge_2_f_score
 
 
@@ -89,6 +99,11 @@ def continuous_eval(strategy,
                     eval_steps=None,
                     model_dir=None,
                     timeout=3000):
+  """(Edit by Sue) Add tokenizer."""
+  tokenizer = tokenization.FullTokenizer(
+      FLAGS.vocab, do_lower_case=FLAGS.do_lower_case, split_on_punc=False)
+  
+
   """Continuously evaluate checkpoints on testing data."""
   test_dataset = input_pipeline.get_input_dataset(
       eval_file_pattern,
@@ -153,7 +168,13 @@ def continuous_eval(strategy,
       for metric, func in metrics_and_funcs:
         for targets, logits in zip(outputs[0], outputs[1]):
           metric.update_state(func(logits.numpy(), targets.numpy()))
-
+          """(Edit by Sue) Convert id to vocab using tokenizer"""
+          if func == rouge_l_fscore:
+            _predictions = np.argmax(logits.numpy(), axis=-1)
+            logging.info(f"One example from test batch {i}")         
+            logging.info(f"> true title: {tokenizer.convert_ids_to_tokens(targets[0].numpy())}")
+            logging.info(f"> prediction: {tokenizer.convert_ids_to_tokens(_predictions[0])}")
+          
     with eval_summary_writer.as_default():
       step = global_step.numpy()
       for metric, _ in metrics_and_funcs:
